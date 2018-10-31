@@ -1,0 +1,26 @@
+.jumbotron {
+  text-align: center;
+}
+
+.background {
+  background-image: url("../img/bg.jpg");
+  height: 700px;
+}
+.background .bluePlayerLabel {
+  font-size: 3vw;
+  color: blue;
+  float: left;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.background .redPlayerLabel {
+  font-size: 3vw;
+  color: red;
+  float: right;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+button {
+  margin-bottom: 10px;
+}
