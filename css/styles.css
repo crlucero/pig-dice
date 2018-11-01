@@ -6,6 +6,7 @@
 }
 
 .background {
+  display: none;
   background-image: url("../img/bg.jpg");
   height: 700px;
   position: relative;
@@ -60,5 +61,8 @@ float: left;
   font-weight: bold;
   position: absolute;
   top: 65%;
-  left: 50%;
+  left: 44%;
+}
+.game-buttons {
+  display: none;
 }

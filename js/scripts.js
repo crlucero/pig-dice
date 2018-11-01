@@ -35,10 +35,30 @@ Players.prototype.changeCurrent = function (){
   }
   return this.currentPlayer;
 }
+Players.prototype.whoPlays = function (){
+  if (this.currentPlayer==="blue") {
+    if (this.bluePlayer==="player") {
+      return "player"
+    } else if (this.bluePlayer==="comEasy") {
+      return "easy"
+    } else {
+      return "hard"
+    }
+  } else {
+    if (this.redPlayer==="player") {
+      return "player"
+    } else if (this.redPlayer==="comEasy") {
+      return "easy"
+    } else {
+      return "hard"
+    }
+  }
+}
 function Turn () {
   this.point = 0,
   this.dice =0,
-  this.changeTurn= false
+  this.changeTurn= false,
+  this.turn=1
 }
 Turn.prototype.rollDice = function () {
   this.dice= Math.floor(Math.random() * 6)+1;
@@ -47,7 +67,14 @@ Turn.prototype.rollDice = function () {
     this.changeTurn= true;
   } else {
     this.point += this.dice;
+    this.turn ++;
   }
+}
+Turn.prototype.reset = function () {
+  this.point = 0,
+  this.dice =0,
+  this.changeTurn= false,
+  this.turn=1
 }
 function Game (){
   this.finished = false;
@@ -55,7 +82,7 @@ function Game (){
   this.redPoint = 0
 }
 Game.prototype.ifSomeoneWin = function (){
-  if (this.bluePoint>=20 || this.redPoint>=20) {
+  if (this.bluePoint>=100 || this.redPoint>=100) {
     this.finished = true;
     return true;
   } else {
@@ -83,69 +110,76 @@ function diceUpdate (turn,players){
       $(".dice img").attr('src',images[dice-1]);
     }
   })
-  $("span#turnPoint").text(turn.point).css('color',players.currentPlayer)
+  $("span#turnPoint").text("this turn :"+turn.point).css('color',players.currentPlayer)
 }
-
+function holdTheDice (players,turn,game){
+  game.turnEnd(turn,players);
+  turnUpdate(game,players,turn);
+  if (game.ifSomeoneWin()){
+    alert (players.currentPlayer+" player won!");
+  } else {
+    players.changeCurrent();
+    turn.reset();
+    if (players.whoPlays()==="player") {
+      $(".game-buttons").show();
+    } else {
+      $(".game-buttons").hide();
+      rollTheDice(players,turn,game);
+    }
+  }
+}
+function rollTheDice (players,turn,game){
+  turn.rollDice();
+  diceUpdate(turn,players);
+  if (turn.changeTurn) {
+    turn.changeTurn = false;
+    holdTheDice (players,turn,game);
+    }
+  if (players.whoPlays()==="player"){
+    $(".game-buttons").show()
+  } else if (players.whoPlays()==="easy"){
+    $(".game-buttons").hide();
+    if (turn.turn=2) {
+      holdTheDice(players,turn,game);
+    } else {
+      rollTheDice(players,turn,game);
+    }
+  } else {
+    $(".game-buttons").hide();
+    if (turn.point > 10){
+      holdTheDice(players,turn,game);
+    } else {
+      rollTheDice(players,turn,game);
+    }
+  }
+}
 
 $(document).ready(function() {
   $("form#formOne").submit(function(event) {
    event.preventDefault();
-  var bluePlayer = $("#bluePlayerType").val();
-  var redPlayer = $("#redPlayerType").val();
-  var bluePlayerName = $("input#bluePlayer").val();
-  var redPlayerName = $("input#redPlayer").val();
-    // console.log(bluePlayer);
-  var players = new Players(bluePlayer, redPlayer, bluePlayerName, redPlayerName);
-  // console.log(players);
-  $("span#redPlayerName").text(players.redPlayerName);
-  $("span#bluePlayerName").text(players.bluePlayerName);
-  // do {
-  var game = new Game();
-  var turn = new Turn();
-  console.log(turn);
-  $("#rollDiceButton").click(function(){
-    turn.rollDice();
-    diceUpdate(turn,players);
-    if (turn.changeTurn) {
-      console.log("i am running")
-      players.changeCurrent();
-      turn.changeTurn = false;
-      diceUpdate(turn,players)
+    $('.background').show();
+    var bluePlayer = $("#bluePlayerType").val();
+    var redPlayer = $("#redPlayerType").val();
+    var bluePlayerName = $("input#bluePlayer").val();
+    var redPlayerName = $("input#redPlayer").val();
+    var players = new Players(bluePlayer, redPlayer, bluePlayerName, redPlayerName);
+    $("span#redPlayerName").text(players.redPlayerName);
+    $("span#bluePlayerName").text(players.bluePlayerName);
+    var game = new Game();
+    var turn = new Turn();
+    console.log(turn);
+    if (players.bluePlayer==="player" || players.redPlayer==="player"){
+      $("#rollDiceButton").click(function(){
+        rollTheDice (players,turn,game);
+      })
+      $("#holdButton").click(function(){
+        holdTheDice (players,turn,game);
+      })
     }
-  })
-  $("#holdButton").click(function(){
-    game.turnEnd(turn,players);
-    turnUpdate(game,players,turn);
-    if (game.ifSomeoneWin()){
-      alert (players.currentPlayer+" player won!");
+    if (players.whoPlays()==="player"){
+      $(".game-buttons").show()
     } else {
-      players.changeCurrent();
-      turn = new Turn();
+      rollTheDice(players,turn,game);
     }
   })
-  //   do {
-  //     turn.rollDice();
-  //     diceUpdate(turn);
-  //     var choice = false;
-  //     if (turn.dice != 1) {
-  //       choice = confirm(players.currentPlayer+' You rolled a '+turn.dice+' Do you want to continue?');
-  //     }
-  //     if (!choice) {
-  //         turn.changeTurn= true;
-  //       }
-  //     } while (!turn.changeTurn)
-  //
-  //   if (players.currentPlayer==="blue"){
-  //     game.bluePoint+=turn.point;
-  //   } else {
-  //     game.redPoint+=turn.point;
-  //   }
-  //   players.changeCurrent();
-  //
-  // } while (players.redPoint<10 && players.bluePoint<10);
-
-  // console.log(players);
-  // console.log(turn);
-
-})
 })
