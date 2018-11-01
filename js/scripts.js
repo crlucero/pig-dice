@@ -3,9 +3,8 @@ function Players (bluePlayer, redPlayer, bluePlayerName, redPlayerName) {
   this.redPlayer = redPlayer,
   this.bluePlayerName = bluePlayerName,
   this.redPlayerName = redPlayerName,
-  this.currentPlayer = "blue",
-  this.bluePoint = 0,
-  this.redPoint = 0
+  this.currentPlayer = "blue"
+
 
   this.starter = function (){
     var random =Math.floor(Math.random()*2);
@@ -36,28 +35,47 @@ Players.prototype.changeCurrent = function (){
   }
   return this.currentPlayer;
 }
-
-
 function Turn () {
   this.point = 0,
   this.dice =0,
-  this.changeTurn= false;
+  this.changeTurn= false
 }
 Turn.prototype.rollDice = function () {
   this.dice= Math.floor(Math.random() * 6)+1;
   if (this.dice===1) {
-    console.log("1")
     this.point = 0;
     this.changeTurn= true;
   } else {
     this.point += this.dice;
   }
 }
-
-function turnUpdate (){
-
+function Game (){
+  this.finished = false;
+  this.bluePoint = 0,
+  this.redPoint = 0
 }
-function diceUpdate (turn){
+Game.prototype.ifSomeoneWin = function (){
+  if (this.bluePoint>=20 || this.redPoint>=20) {
+    this.finished = true;
+    return true;
+  } else {
+    return false;
+  }
+}
+Game.prototype.turnEnd = function (turn,players){
+  if (players.currentPlayer==="red") {
+    this.redPoint+=turn.point;
+  } else {
+    this.bluePoint+=turn.point;
+  }
+}
+
+function turnUpdate (game,players,turn){
+  $("span#turnPoint").text(turn.point).css('color',players.currentPlayer);
+  $("span#redPlayerScore").text(game.redPoint);
+  $("span#bluePlayerScore").text(game.bluePoint);
+}
+function diceUpdate (turn,players){
   var images=["./img/dice1.png","./img/dice2.png","./img/dice3.png","./img/dice4.png","./img/dice5.png","./img/dice6.png"];
   var dices = [1,2,3,4,5,6];
   dices.forEach(function(dice){
@@ -65,9 +83,8 @@ function diceUpdate (turn){
       $(".dice img").attr('src',images[dice-1]);
     }
   })
-
+  $("span#turnPoint").text(turn.point).css('color',players.currentPlayer)
 }
-
 
 
 $(document).ready(function() {
@@ -82,29 +99,50 @@ $(document).ready(function() {
   // console.log(players);
   $("span#redPlayerName").text(players.redPlayerName);
   $("span#bluePlayerName").text(players.bluePlayerName);
-  do {
-    var turn = new Turn()
-
-    do {
-      turn.rollDice();
-      diceUpdate(turn);
-      var choice = false;
-      if (turn.dice != 1) {
-        choice = confirm(players.currentPlayer+' You rolled a '+turn.dice+' Do you want to continue?');
-      }
-      if (!choice) {
-          turn.changeTurn= true;
-        }
-      } while (!turn.changeTurn)
-
-    if (players.currentPlayer==="blue"){
-      players.bluePoint+=turn.point;
-    } else {
-      players.redPoint+=turn.point;
+  // do {
+  var game = new Game();
+  var turn = new Turn();
+  console.log(turn);
+  $("#rollDiceButton").click(function(){
+    turn.rollDice();
+    diceUpdate(turn,players);
+    if (turn.changeTurn) {
+      console.log("i am running")
+      players.changeCurrent();
+      turn.changeTurn = false;
+      diceUpdate(turn,players)
     }
-    players.changeCurrent();
-
-  } while (players.redPoint<10 && players.bluePoint<10);
+  })
+  $("#holdButton").click(function(){
+    game.turnEnd(turn,players);
+    turnUpdate(game,players,turn);
+    if (game.ifSomeoneWin()){
+      alert (players.currentPlayer+" player won!");
+    } else {
+      players.changeCurrent();
+      turn = new Turn();
+    }
+  })
+  //   do {
+  //     turn.rollDice();
+  //     diceUpdate(turn);
+  //     var choice = false;
+  //     if (turn.dice != 1) {
+  //       choice = confirm(players.currentPlayer+' You rolled a '+turn.dice+' Do you want to continue?');
+  //     }
+  //     if (!choice) {
+  //         turn.changeTurn= true;
+  //       }
+  //     } while (!turn.changeTurn)
+  //
+  //   if (players.currentPlayer==="blue"){
+  //     game.bluePoint+=turn.point;
+  //   } else {
+  //     game.redPoint+=turn.point;
+  //   }
+  //   players.changeCurrent();
+  //
+  // } while (players.redPoint<10 && players.bluePoint<10);
 
   // console.log(players);
   // console.log(turn);
