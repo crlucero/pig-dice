@@ -1,12 +1,12 @@
-# _Movie Ticket_
+# _Pig Dice Game_
 
 #### _single Webpage for Epicodus, 10.30.2018_
 
-#### By _**Edin Filipovic and Kaveh Saleminejad**_
+#### By _**Cristian Lucero and Kaveh Saleminejad**_
 
 ## Description
 
-_A single webpage for getting the total price of movie tickets_
+_A webpage that allows user to play pig dice game against another player or computer_
 
 ## Setup/Installation Requirements
 
@@ -17,7 +17,7 @@ _A single webpage for getting the total price of movie tickets_
 
 ## Support and contact details
 
-_Contact Edin Filipovic - edin.filipovic89@gmail.com or Kaveh Saleminejad - lcaveh@gmail.com._
+_Contact Cristian Lucero - cristianjlucero32@gmail.com or Kaveh Saleminejad - lcaveh@gmail.com._
 
 ## GitHub page's links
 
@@ -32,4 +32,4 @@ _Contact Edin Filipovic - edin.filipovic89@gmail.com or Kaveh Saleminejad - lcav
 
 *This software is licensed under the MIT license.*
 
-Copyright (c) 2018 **_Edin Filipovic, Kaveh Saleminejad_**
+Copyright (c) 2018 **_Cristian Lucero, Kaveh Saleminejad_**
